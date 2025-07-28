@@ -18,7 +18,7 @@ WITH contract_transactions AS (
         total_transactions >= 10000
 )
 SELECT
-    week,
+    week as date,
     CASE 
         WHEN contract_name IS NOT NULL AND contract_name != '' 
         THEN contract_address || ' (' || contract_name || ')'
