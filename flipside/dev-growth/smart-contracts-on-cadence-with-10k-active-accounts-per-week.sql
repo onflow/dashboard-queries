@@ -18,12 +18,12 @@ WITH contract_users AS (
             'A.1d7e57aa55817448.NonFungibleToken',
             'A.1d7e57aa55817448.NonFungibleToken.NFT.ResourceDestr',
             'A.e467b9dd11fa00df.EVM',
+            'A.4eb8a10cb9f87357.NFTStorefrontV2',
+            'A.b8ea91944fd51c43.OffersV2',
+            'A.4eb8a10cb9f87357.NFTStorefront',
+            'A.ead892083b3e2c6c.DapperUtilityCoin',
             'flow'
         )
-        AND fe.event_contract NOT LIKE 'A.4eb8a10cb9f87357.NFTStorefrontV2.%'
-        AND fe.event_contract NOT LIKE 'A.b8ea91944fd51c43.OffersV2.%'
-        AND fe.event_contract NOT LIKE 'A.4eb8a10cb9f87357.NFTStorefront.%'
-        AND fe.event_contract NOT LIKE 'A.ead892083b3e2c6c.DapperUtilityCoin.%'
     GROUP BY
         1, 2
     HAVING 
