@@ -1,9 +1,9 @@
 WITH contract_transactions AS (
     SELECT
-        trunc(ft.block_timestamp,'week') as week,
+        DATE_TRUNC('week', ft.block_timestamp) as week,
         dc.name as contract_name,
         dc.address as contract_address,
-        count(distinct ft.tx_hash) as total_transactions
+        COUNT(DISTINCT ft.tx_hash) as total_transactions
     FROM
         flow.core_evm.fact_transactions ft
     JOIN 
@@ -19,12 +19,14 @@ WITH contract_transactions AS (
 )
 SELECT
     week,
-    contract_name,
-    contract_address,
-    total_transactions,
-    SUM(total_transactions) OVER (PARTITION BY contract_address ORDER BY week) as cum_transactions
+    CASE 
+        WHEN contract_name IS NOT NULL AND contract_name != '' 
+        THEN contract_address || ' (' || contract_name || ')'
+        ELSE contract_address
+    END as contract_identifier,
+    total_transactions
 FROM
     contract_transactions
 ORDER BY
-    week desc,
-    total_transactions desc;
+    date DESC,
+    total_transactions DESC;

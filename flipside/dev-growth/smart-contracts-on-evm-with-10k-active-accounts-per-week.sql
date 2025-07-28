@@ -1,9 +1,9 @@
 WITH contract_active_accounts AS (
     SELECT
-        trunc(ft.block_timestamp,'week') as week,
+        DATE_TRUNC('week', ft.block_timestamp) as week,
         dc.name as contract_name,
         dc.address as contract_address,
-        count(distinct ft.from_address) as active_accounts
+        COUNT(DISTINCT ft.from_address) as active_accounts
     FROM
         flow.core_evm.fact_transactions ft
     JOIN 
@@ -18,13 +18,15 @@ WITH contract_active_accounts AS (
         active_accounts >= 10000
 )
 SELECT
-    week,
-    contract_name,
-    contract_address,
-    active_accounts,
-    SUM(active_accounts) OVER (PARTITION BY contract_address ORDER BY week) as cum_active_accounts
+    week as date,
+    CASE 
+        WHEN contract_name IS NOT NULL AND contract_name != '' 
+        THEN contract_address || ' (' || contract_name || ')'
+        ELSE contract_address
+    END as contract_identifier,
+    active_accounts
 FROM
     contract_active_accounts
 ORDER BY
-    week desc,
-    active_accounts desc;
+    date DESC,
+    active_accounts DESC;

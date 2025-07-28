@@ -1,8 +1,8 @@
 WITH contract_users AS (
     SELECT
-        trunc(ft.block_timestamp,'week') as week,
+        DATE_TRUNC('week', ft.block_timestamp) as week,
         fe.event_contract,
-        count(distinct a.value) as unique_users
+        COUNT(DISTINCT a.value) as unique_users
     FROM
         flow.core.fact_transactions ft
     JOIN 
@@ -29,16 +29,15 @@ WITH contract_users AS (
         AND fe.event_contract NOT LIKE 'A.ead892083b3e2c6c.DapperUtilityCoin.%'
     GROUP BY
         1, 2
+    HAVING 
+        unique_users >= 10000
 )
 SELECT
-    week,
+    week as date,
     event_contract,
-    unique_users,
-    SUM(unique_users) OVER (PARTITION BY event_contract ORDER BY week) as cum_users
+    unique_users
 FROM
     contract_users
-WHERE
-    unique_users >= 10000
 ORDER BY
-    week desc,
-    unique_users desc;
+    date DESC,
+    unique_users DESC;
