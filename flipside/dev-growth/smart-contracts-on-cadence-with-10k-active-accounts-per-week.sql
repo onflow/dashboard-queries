@@ -7,11 +7,8 @@ WITH contract_users AS (
         flow.core.fact_transactions ft
     JOIN 
         flow.core.fact_events fe
-        ON ft.tx_id = fe.tx_id
-    JOIN
-        flow.core.ez_transaction_actors b
-        ON ft.tx_id = b.tx_id,
-        LATERAL FLATTEN(INPUT => b.actors) AS a
+        ON ft.tx_id = fe.tx_id,
+        LATERAL FLATTEN(INPUT => ft.authorizers) AS a
     WHERE
         ft.block_timestamp >= DATEADD('week', -12, CURRENT_DATE())
         AND fe.event_contract NOT IN (
